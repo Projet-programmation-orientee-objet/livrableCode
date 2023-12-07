@@ -1,57 +1,55 @@
-#include "pch.h"
-#include "MapProduct.h"
-#include "SQLio.h"
+#pragma once
 
-Composant::MapProduct::MapProduct() {}
+using namespace System;
+using namespace System::Windows::Forms;
+using namespace System::Data;
+using namespace MySql::Data::MySqlClient;
 
-void Composant::MapProduct::setProductId(int id) {
-    this->productId = id;
-}
+namespace Composant {
+    ref class MapProduct
+    {
+    private:
+        int productId;
+        int tvaId;
+        int colorId;
+        String^ tvaClass;
+        String^ productName;
+        String^ productDescription;
+        String^ color;
+        float unitPrice;
+        float tvaValue;
 
-void Composant::MapProduct::setTvaId(int id) {
-    this->tvaId = id;
-}
+    public:
+        MapProduct();
+        void setProductId(int id);
+        void setTvaId(int id);
+        void setColorId(int id);
+        void setTvaClass(String^ tvaClass);
+        void setProductName(String^ name);
+        void setProductDescr(String^ descr);
+        void setProductColor(String^ color);
+        void setUnitPrice(float price);
+        void setTvaValue(float value);
+        String^ selectAll(String^ dataTableName);
+        String^ selectWithId(String^ dataTableName);
 
-void Composant::MapProduct::setTvaClass(String^ tvaClass) {
-    this->tvaClass = tvaClass;
-}
+        int getProductId();
+        int getTvaId();
+        String^ getTvaClass();
+        String^ getProductName();
+        String^ getProductDescr();
+        String^ getProductColor();
+        float getUnitPrice();
+        float getTvaValue();
 
-void Composant::MapProduct::setProductName(String^ name) {
-    this->productName = name;
-}
+        String^ insertProduct();
+        String^ insertColor();
+        String^ insertColored();
+        String^ insertTva();
 
-void Composant::MapProduct::setProductDescr(String^ descr) {
-    this->productDescription = descr;
-}
+        String^ deleteProduct();
 
-void Composant::MapProduct::setProductColor(String^ color) {
-    this->color = color;
-}
-
-void Composant::MapProduct::setUnitPrice(float price) {
-    this->unitPrice = price;
-}
-
-void Composant::MapProduct::setIdProduct(float value) {
-    this->tvaValue = value;
-}
-
-String^ Composant::MapProduct::selectAll(String^ dataTableName) {
-    return "SELECT * FROM " + dataTableName;
-}
-
-String^ Composant::MapProduct::selectWithId(String^ dataTableName, int id) {
-   return "SELECT * FROM " + dataTableName + " WHERE ID = " + id + ";";
-}
-
-String^ Composant::MapProduct::Insert() {
-    return "INSERT INTO product (product_name,product_description,unity_price,color) VALUES ("+this->productName+","+this->productDescription+","+this->unitPrice+","+this->color+");";
-}
-
-String^ Composant::MapProduct::Delete() {
-    return "DELETE FROM product WHERE ID =" + this->productId + ";";
-}
-
-String^ Composant::MapProduct::Update() {
-    return "UPDATE product SET" + " " + "WHERE"; //a modifier
+        String^ updateProduct();
+        String^ updtateColored();
+    };
 }
