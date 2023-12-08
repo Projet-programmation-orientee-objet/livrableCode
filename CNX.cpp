@@ -7,7 +7,7 @@ using namespace System::Data;
 using namespace System::Drawing;
 Composant::CNX::CNX()
 {
-	this->sCnx = "Data Source=AYA\\SQLEXPRESS;Initial Catalog=gestion;Integrated Security=True";
+	this->sCnx = "Data Source=\\SQLEXPRESS;Initial Catalog=gestion;Integrated Security=True"; // à completer le data source 
 
 	this->sSql = "Rien";
 
