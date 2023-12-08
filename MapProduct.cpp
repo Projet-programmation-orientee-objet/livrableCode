@@ -125,3 +125,10 @@ String^ Composant::MapProduct::updtateColored()
     return "UPDATE colored SET id_color = '" + this->colorId +
         "' WHERE id_product = '" + this->productId + "';";
 }
+
+String^ Composant::MapProduct::Decrement(int n) {
+    return "UPDATE stock SET quantite = quantite -" + n + " WHERE id_produit =  " + this->productId + "; ";
+} //focntion a changer dans stock
+String^ Composant::MapProduct::Increment(int n) {
+    return "UPDATE stock SET quantite = quantite +" + n + " WHERE id_produit =  " + this->productId + "; ";
+}
