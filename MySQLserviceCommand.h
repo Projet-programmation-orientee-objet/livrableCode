@@ -11,7 +11,7 @@ using namespace System::Collections::Generic;
 namespace Service {
     ref class MySQLserviceCommand:public  Services::MySQLservice
     {
-    public:
+    private:
         Composant::MappingAdress^ adressMapper;
         Composant::MapCustomer^ customerMapper;
         Composant::MapCommand^ commandMapper;
