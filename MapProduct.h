@@ -51,5 +51,8 @@ namespace Composant {
 
         String^ updateProduct();
         String^ updtateColored();
+
+        String^ Decrement(int n);
+        String^ Increment(int n);
     };
 }
