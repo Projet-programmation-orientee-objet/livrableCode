@@ -1,9 +1,14 @@
 #include "MySQLserviceCommand.h"
 #include "ClientService.h"
-
+#include "MySQLServiceStock.h"
 #pragma once
+#using <mscorlib.dll> //pointeur sur fonction
 
-	namespace porjet6 {
+
+
+
+
+	namespace PrositefinalPOO {
 
 		using namespace System;
 		using namespace System::ComponentModel;
@@ -23,7 +28,10 @@
 				listIDs = gcnew List<Tuple<int, int>^>();
 				this->ServiceClient = (gcnew Services::ClientService());
 				this->ServiceCommand = (gcnew Service::MySQLserviceCommand());
-				InitializeComponent();
+				this->serviceStock = (gcnew Service::MySQLserviceStock());
+					InitializeComponent();
+					dataGridViewClient->CellValidating += (gcnew DataGridViewCellValidatingEventHandler(this, &MyForm::dataGridViewClient_CellValidating));
+
 				//
 				//TODO: ajoutez ici le code du constructeur
 				//
@@ -48,7 +56,7 @@
 
 
 		private: Service::MySQLserviceCommand^ ServiceCommand;
-
+		private:  Service::MySQLserviceStock^ serviceStock;
 		private: Services::ClientService^ ServiceClient;
 
 
@@ -104,6 +112,7 @@
 		private: System::Windows::Forms::Button^ button1;
 		private: System::Windows::Forms::Button^ button2;
 		private: System::Windows::Forms::TextBox^ textBox1;
+		private: System::Windows::Forms::Button^ button3;
 
 
 
@@ -167,6 +176,7 @@
 				this->searchButtonCommand = (gcnew System::Windows::Forms::Button());
 				this->searchTextBoxCommand = (gcnew System::Windows::Forms::TextBox());
 				this->tabPageStock = (gcnew System::Windows::Forms::TabPage());
+				this->button3 = (gcnew System::Windows::Forms::Button());
 				this->MessageBoxLabelStock = (gcnew System::Windows::Forms::Label());
 				this->messageRichTextBoxStock = (gcnew System::Windows::Forms::RichTextBox());
 				this->deleteButtonStock = (gcnew System::Windows::Forms::Button());
@@ -212,6 +222,8 @@
 				this->searchTextBoxClient->Size = System::Drawing::Size(263, 22);
 				this->searchTextBoxClient->TabIndex = 5;
 				this->searchTextBoxClient->Text = L"Entrez une recherche ici...";
+				this->searchTextBoxClient->Click += gcnew System::EventHandler(this, &MyForm::searchTextBox_Click);
+				this->searchTextBoxClient->Leave += gcnew System::EventHandler(this, &MyForm::searchTextBox_Leave);
 				// 
 				// searchButtonClient
 				// 
@@ -222,6 +234,7 @@
 				this->searchButtonClient->TabIndex = 6;
 				this->searchButtonClient->Text = L"Rechercher";
 				this->searchButtonClient->UseVisualStyleBackColor = true;
+				this->searchButtonClient->Click += gcnew System::EventHandler(this, &MyForm::searchButtonClient_Click);
 				// 
 				// addButtonClient
 				// 
@@ -367,7 +380,8 @@
 				// 
 				// button2
 				// 
-				this->button2->Anchor = System::Windows::Forms::AnchorStyles::None;
+				this->button2->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
+				this->button2->AutoSize = true;
 				this->button2->Location = System::Drawing::Point(513, 367);
 				this->button2->Margin = System::Windows::Forms::Padding(4);
 				this->button2->Name = L"button2";
@@ -379,6 +393,7 @@
 				// 
 				// textBox1
 				// 
+				this->textBox1->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
 				this->textBox1->Location = System::Drawing::Point(453, 375);
 				this->textBox1->Name = L"textBox1";
 				this->textBox1->Size = System::Drawing::Size(53, 22);
@@ -443,6 +458,7 @@
 				this->clientInCommandSearchButton->TabIndex = 16;
 				this->clientInCommandSearchButton->Text = L"Rechercher";
 				this->clientInCommandSearchButton->UseVisualStyleBackColor = true;
+				this->clientInCommandSearchButton->Click += gcnew System::EventHandler(this, &MyForm::clientInCommandSearchButton_Click);
 				// 
 				// clientInCommandSearchBox
 				// 
@@ -453,6 +469,8 @@
 				this->clientInCommandSearchBox->Size = System::Drawing::Size(181, 22);
 				this->clientInCommandSearchBox->TabIndex = 15;
 				this->clientInCommandSearchBox->Text = L"Entrez une recherche ici...";
+				this->clientInCommandSearchBox->Click += gcnew System::EventHandler(this, &MyForm::searchTextBox_Click);
+				this->clientInCommandSearchBox->Leave += gcnew System::EventHandler(this, &MyForm::searchTextBox_Leave);
 				// 
 				// dataGridViewClientInCommand
 				// 
@@ -501,6 +519,7 @@
 				this->stockInCommandSearchButton->TabIndex = 24;
 				this->stockInCommandSearchButton->Text = L"Rechercher";
 				this->stockInCommandSearchButton->UseVisualStyleBackColor = true;
+				this->stockInCommandSearchButton->Click += gcnew System::EventHandler(this, &MyForm::stockInCommandSearchButton_Click);
 				// 
 				// stockInCommandSearchBox
 				// 
@@ -511,6 +530,8 @@
 				this->stockInCommandSearchBox->Size = System::Drawing::Size(181, 22);
 				this->stockInCommandSearchBox->TabIndex = 23;
 				this->stockInCommandSearchBox->Text = L"Entrez une recherche ici...";
+				this->stockInCommandSearchBox->Click += gcnew System::EventHandler(this, &MyForm::searchTextBox_Click);
+				this->stockInCommandSearchBox->Leave += gcnew System::EventHandler(this, &MyForm::searchTextBox_Leave);
 				// 
 				// stockInCommandGridView
 				// 
@@ -537,6 +558,7 @@
 				this->billButton->TabIndex = 19;
 				this->billButton->Text = L"Editer facture";
 				this->billButton->UseVisualStyleBackColor = true;
+				this->billButton->Click += gcnew System::EventHandler(this, &MyForm::billButton_Click);
 				// 
 				// messageTextBoxLabelCommand
 				// 
@@ -583,6 +605,7 @@
 				this->modifyButtonCommand->TabIndex = 15;
 				this->modifyButtonCommand->Text = L"Modifier";
 				this->modifyButtonCommand->UseVisualStyleBackColor = true;
+				this->modifyButtonCommand->Click += gcnew System::EventHandler(this, &MyForm::modifyButtonCommand_Click);
 				// 
 				// addButtonCommand
 				// 
@@ -628,6 +651,8 @@
 				this->searchButtonCommand->TabIndex = 7;
 				this->searchButtonCommand->Text = L"Rechercher";
 				this->searchButtonCommand->UseVisualStyleBackColor = true;
+				this->searchButtonCommand->Click += gcnew System::EventHandler(this, &MyForm::searchTextBox_Click);
+				this->searchButtonCommand->Leave += gcnew System::EventHandler(this, &MyForm::searchTextBox_Leave);
 				// 
 				// searchTextBoxCommand
 				// 
@@ -638,9 +663,12 @@
 				this->searchTextBoxCommand->Size = System::Drawing::Size(263, 22);
 				this->searchTextBoxCommand->TabIndex = 6;
 				this->searchTextBoxCommand->Text = L"Entrez une recherche ici...";
+				this->searchTextBoxCommand->Click += gcnew System::EventHandler(this, &MyForm::searchTextBox_Click);
+				this->searchTextBoxCommand->Leave += gcnew System::EventHandler(this, &MyForm::searchTextBox_Leave);
 				// 
 				// tabPageStock
 				// 
+				this->tabPageStock->Controls->Add(this->button3);
 				this->tabPageStock->Controls->Add(this->MessageBoxLabelStock);
 				this->tabPageStock->Controls->Add(this->messageRichTextBoxStock);
 				this->tabPageStock->Controls->Add(this->deleteButtonStock);
@@ -658,6 +686,18 @@
 				this->tabPageStock->TabIndex = 2;
 				this->tabPageStock->Text = L"Gestion stock";
 				this->tabPageStock->UseVisualStyleBackColor = true;
+				// 
+				// button3
+				// 
+				this->button3->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
+				this->button3->Location = System::Drawing::Point(20, 366);
+				this->button3->Margin = System::Windows::Forms::Padding(4);
+				this->button3->Name = L"button3";
+				this->button3->Size = System::Drawing::Size(137, 39);
+				this->button3->TabIndex = 29;
+				this->button3->Text = L"Mise a jour";
+				this->button3->UseVisualStyleBackColor = true;
+				this->button3->Click += gcnew System::EventHandler(this, &MyForm::button3_Click);
 				// 
 				// MessageBoxLabelStock
 				// 
@@ -685,35 +725,38 @@
 				// deleteButtonStock
 				// 
 				this->deleteButtonStock->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-				this->deleteButtonStock->Location = System::Drawing::Point(300, 366);
+				this->deleteButtonStock->Location = System::Drawing::Point(455, 366);
 				this->deleteButtonStock->Margin = System::Windows::Forms::Padding(4);
 				this->deleteButtonStock->Name = L"deleteButtonStock";
 				this->deleteButtonStock->Size = System::Drawing::Size(137, 39);
 				this->deleteButtonStock->TabIndex = 26;
 				this->deleteButtonStock->Text = L"Supprimer";
 				this->deleteButtonStock->UseVisualStyleBackColor = true;
+				this->deleteButtonStock->Click += gcnew System::EventHandler(this, &MyForm::deleteButtonStock_Click);
 				// 
 				// modifyButtonStock
 				// 
 				this->modifyButtonStock->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-				this->modifyButtonStock->Location = System::Drawing::Point(155, 366);
+				this->modifyButtonStock->Location = System::Drawing::Point(310, 366);
 				this->modifyButtonStock->Margin = System::Windows::Forms::Padding(4);
 				this->modifyButtonStock->Name = L"modifyButtonStock";
 				this->modifyButtonStock->Size = System::Drawing::Size(137, 39);
 				this->modifyButtonStock->TabIndex = 25;
 				this->modifyButtonStock->Text = L"Modifier";
 				this->modifyButtonStock->UseVisualStyleBackColor = true;
+				this->modifyButtonStock->Click += gcnew System::EventHandler(this, &MyForm::modifyButtonStock_Click);
 				// 
 				// addButtonStock
 				// 
 				this->addButtonStock->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left));
-				this->addButtonStock->Location = System::Drawing::Point(9, 366);
+				this->addButtonStock->Location = System::Drawing::Point(165, 366);
 				this->addButtonStock->Margin = System::Windows::Forms::Padding(4);
 				this->addButtonStock->Name = L"addButtonStock";
 				this->addButtonStock->Size = System::Drawing::Size(137, 39);
 				this->addButtonStock->TabIndex = 24;
 				this->addButtonStock->Text = L"Ajouter";
 				this->addButtonStock->UseVisualStyleBackColor = true;
+				this->addButtonStock->Click += gcnew System::EventHandler(this, &MyForm::addButtonStock_Click);
 				// 
 				// dataGridViewStock
 				// 
@@ -747,6 +790,7 @@
 				this->searchButtonStock->TabIndex = 21;
 				this->searchButtonStock->Text = L"Rechercher";
 				this->searchButtonStock->UseVisualStyleBackColor = true;
+				this->searchButtonStock->Click += gcnew System::EventHandler(this, &MyForm::searchButtonStock_Click_1);
 				// 
 				// searchTextBoxStock
 				// 
@@ -757,6 +801,8 @@
 				this->searchTextBoxStock->Size = System::Drawing::Size(263, 22);
 				this->searchTextBoxStock->TabIndex = 20;
 				this->searchTextBoxStock->Text = L"Entrez une recherche ici...";
+				this->searchTextBoxStock->Click += gcnew System::EventHandler(this, &MyForm::searchTextBox_Click);
+				this->searchTextBoxStock->Leave += gcnew System::EventHandler(this, &MyForm::searchTextBox_Leave);
 				// 
 				// MyForm
 				// 
@@ -789,7 +835,45 @@
 				this->ResumeLayout(false);
 
 			}
+			void  dataGridViewClient_CellValidating(Object^ sender, DataGridViewCellValidatingEventArgs^ e)
+			{
+				if (e->ColumnIndex == 10 && e->RowIndex != -1)
+				{
+					bool isValid = true;
+					String^ city = e->FormattedValue->ToString();
+					for each (char c in city)
+					{
+						if (!Char::IsLetter(c))
+						{
+							isValid = false;
+							break;
+						}
+					}
+					if (!isValid)
+					{
+						e->Cancel = true; // Annule la saisie si la condition n'est pas remplie
+						MessageBox::Show("La saisie de city est invalide", "Erreur ");
+					}
+				}
+			}
 #pragma endregion
+		
+
+private: System::Void searchTextBox_Click(System::Object^ sender, System::EventArgs^ e) {
+	System::Windows::Forms::TextBox^ a = (System::Windows::Forms::TextBox^)sender;
+	if (a->Text == "Entrez une recherche ici...") {
+		a->Text = "";
+
+	}
+}
+
+	private: System::Void searchTextBox_Leave(System::Object^ sender, System::EventArgs^ e) {
+		System::Windows::Forms::TextBox^ a = (System::Windows::Forms::TextBox^)sender;
+		if (a->Text == "") {
+			a->Text = "Entrez une recherche ici...";
+		}
+	}
+	
 		private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
 		}
 		private: System::Void toolStripContainer1_TopToolStripPanel_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -799,28 +883,27 @@
 			int idClient;
 			//ajout de getter apres ca depend du bouton
 			
-			if (dataGridViewClient->SelectedRows->Count > 0)
+			if (this->dataGridViewClientInCommand->SelectedRows->Count > 0)
 			{
 
-				selectedIndex = this->dataGridViewClient->SelectedRows[0]->Index;
-				DataGridViewRow^ selectedRow = dataGridViewCommand->Rows[selectedIndex];
+				selectedIndex = this->dataGridViewClientInCommand->SelectedRows[0]->Index;
+				DataGridViewRow^ selectedRow = dataGridViewClientInCommand->Rows[selectedIndex];
 				idClient = (System::Convert::ToInt32(selectedRow->Cells[0]->Value));
 				this->ServiceCommand->customerMapper->setId(idClient);
 				this->ServiceCommand->commandMapper->setIdCustomer(idClient);
-				String^ s = System::Convert::ToString(selectedRow->Cells[1]->Value);
-				this->ServiceCommand->customerMapper->setLastName(System::Convert::ToString(selectedRow->Cells[1]->Value));
-				this->ServiceCommand->customerMapper->setFirstName(System::Convert::ToString(selectedRow->Cells[2]->Value));
-				this->ServiceCommand->adressMapper->city = System::Convert::ToString(selectedRow->Cells[8]->Value);
+				String^ s = System::Convert::ToString(selectedRow->Cells[8]->Value);
+				this->ServiceCommand->customerMapper->setLastName(System::Convert::ToString(selectedRow->Cells[2]->Value));
+				this->ServiceCommand->customerMapper->setFirstName(System::Convert::ToString(selectedRow->Cells[1]->Value));
+				this->ServiceCommand->adressMapper->setCity ( System::Convert::ToString(selectedRow->Cells[10]->Value));
 				//
-				
 
 				if (s != nullptr)
 				{
 					int lastEmptyRowIndex = -1;
 
-					for (int i = dataGridViewClient->Rows->Count - 1; i >= 0; i--)
+					for (int i = this->dataGridViewCommand->Rows->Count - 1; i >= 0; i--)
 					{
-						DataGridViewRow^ row = dataGridViewClient->Rows[i];
+						DataGridViewRow^ row = dataGridViewCommand->Rows[i];
 
 						// Check if all cells in the row are empty
 						bool isEmpty = true;
@@ -836,14 +919,20 @@
 						if (isEmpty)
 						{
 							lastEmptyRowIndex = i;
-							DataGridViewRow^ selectedRow = dataGridViewClient->Rows[lastEmptyRowIndex - 1];
-							this->ServiceCommand->commandMapper->setPayMeanName(System::Convert::ToString(selectedRow->Cells[1]->Value));
-							this->ServiceCommand->commandMapper->setPayementDate(System::Convert::ToString(selectedRow->Cells[4]->Value));
-							this->ServiceCommand->commandMapper->setPresumeDate(System::Convert::ToString(selectedRow->Cells[6]->Value));
-							this->ServiceCommand->commandMapper->setEmissionDate(System::Convert::ToString(selectedRow->Cells[7]->Value));
+							DataGridViewRow^ selectedRow = dataGridViewCommand->Rows[lastEmptyRowIndex - 1];
+							this->ServiceCommand->commandMapper->setPayMeanName(System::Convert::ToString(selectedRow->Cells[8]->Value));
+							this->ServiceCommand->commandMapper->setPayementDate(System::Convert::ToString(selectedRow->Cells[2]->Value));
+							this->ServiceCommand->commandMapper->setRecPayDate(System::Convert::ToString(selectedRow->Cells[4]->Value));
+							this->ServiceCommand->commandMapper->setPresumeDate(System::Convert::ToString(selectedRow->Cells[4]->Value));
+							this->ServiceCommand->commandMapper->setEmissionDate(System::Convert::ToString(selectedRow->Cells[5]->Value));
 							this->ServiceCommand->commandMapper->setIdCustomer(idClient);
 							this->ServiceCommand->CreerCommande(listIDs);
 							break;
+						}
+						else
+						{
+							MessageBox::Show("you can't have an empty value");
+							return;
 						}
 					}
 
@@ -877,7 +966,7 @@
 				this->dataGridViewCommand->Refresh();
 				// For the second grid
 			
-				System::Data::DataSet^ d4 = this->ServiceCommand->selectAllProducts("tabstock");
+				System::Data::DataSet^ d4 = this->serviceStock->selectAllStock("tabstock");
 				this->stockInCommandGridView->DataSource = d4;
 				this->stockInCommandGridView->DataMember = "tabstock";
 				this->stockInCommandGridView->Refresh();
@@ -903,12 +992,12 @@
 			this->dataGridViewClient->Refresh();
 			System::Data::DataSet^ d = this->ServiceClient->selectAllCustomers("tabcustomers");
 			this->dataGridViewClient->DataSource = d;
+			if(d!= nullptr && d->Tables->Count > 0)
 			this->dataGridViewClient->DataMember = "tabcustomers";
-			this->dataGridViewClient->Columns["ID_Client"]->Visible = false;
-			this->dataGridViewClient->Columns["ID_Adress"]->Visible = false;
-			this->dataGridViewClient->Columns["ID_City"]->Visible = false;
-			this->dataGridViewClient->Columns["ID_Country"]->Visible = false;
-
+			this->dataGridViewClient->Columns["id_customer"]->Visible = false;
+			this->dataGridViewClient->Columns["id_address"]->Visible = false;
+			this->dataGridViewClient->Columns["id_city"]->Visible = false;
+			this->dataGridViewClient->Columns["id_country"]->Visible = false;
 		}
 		private: System::Void addButtonClient_Click(System::Object^ sender, System::EventArgs^ e) {
 
@@ -960,16 +1049,18 @@
 
 					this->ServiceClient->customer->setId(System::Convert::ToInt32(selectedRow->Cells[0]->Value));
 					this->ServiceClient->adress->setID_Customer(this->ServiceClient->customer->ID_Client);
-					this->ServiceClient->customer->setLastName(System::Convert::ToString(selectedRow->Cells[1]->Value));
-					this->ServiceClient->customer->setFirstName(System::Convert::ToString(selectedRow->Cells[2]->Value));
+					this->ServiceClient->customer->setLastName(System::Convert::ToString(selectedRow->Cells[2]->Value));
+					this->ServiceClient->customer->setFirstName(System::Convert::ToString(selectedRow->Cells[1]->Value));
 					this->ServiceClient->customer->setPhone(System::Convert::ToString(selectedRow->Cells[3]->Value));
 					this->ServiceClient->customer->setMail(System::Convert::ToString(selectedRow->Cells[4]->Value));
-					this->ServiceClient->adress->setID_Adress(System::Convert::ToInt32(selectedRow->Cells[5]->Value));
-					this->ServiceClient->adress->setstreet(System::Convert::ToString(selectedRow->Cells[6]->Value));
-					this->ServiceClient->adress->setID_city(System::Convert::ToInt32(selectedRow->Cells[7]->Value));
-					this->ServiceClient->adress->setcity(System::Convert::ToString(selectedRow->Cells[8]->Value));
-					this->ServiceClient->adress->setID_country(System::Convert::ToInt32(selectedRow->Cells[9]->Value));//inchangeable nrmlt
-					this->ServiceClient->adress->setcountry(System::Convert::ToString(selectedRow->Cells[10]->Value));
+					this->ServiceClient->customer->setBirthDate(System::Convert::ToString(selectedRow->Cells[5]->Value));
+					this->ServiceClient->adress->setID_Adress(System::Convert::ToInt32(selectedRow->Cells[6]->Value));
+					this->ServiceClient->adress->setstreet(System::Convert::ToString(selectedRow->Cells[7]->Value));
+					this->ServiceClient->adress->setnumber(System::Convert::ToInt32(selectedRow->Cells[8]->Value));
+					this->ServiceClient->adress->setID_city(System::Convert::ToInt32(selectedRow->Cells[9]->Value));
+					this->ServiceClient->adress->setcity(System::Convert::ToString(selectedRow->Cells[10]->Value));
+					this->ServiceClient->adress->setID_country(System::Convert::ToInt32(selectedRow->Cells[11]->Value));//inchangeable nrmlt
+					this->ServiceClient->adress->setcountry(System::Convert::ToString(selectedRow->Cells[12]->Value));
 					try {
 						this->ServiceClient->ModifierClient();
 					}
@@ -1000,11 +1091,13 @@ private: System::Void deleteButtonClient_Click(System::Object^ sender, System::E
 
 			this->ServiceClient->customer->setId(System::Convert::ToInt32(selectedRow->Cells[0]->Value));
 			this->ServiceClient->adress->setID_Customer(this->ServiceClient->customer->ID_Client);
-			this->ServiceClient->adress->setID_Adress(System::Convert::ToInt32(selectedRow->Cells[5]->Value));
-			this->ServiceClient->adress->setID_city(System::Convert::ToInt32(selectedRow->Cells[7]->Value));
-			this->ServiceClient->adress->setID_country(System::Convert::ToInt32(selectedRow->Cells[9]->Value));
+			this->ServiceClient->adress->setID_Adress(System::Convert::ToInt32(selectedRow->Cells[6]->Value));
+			this->ServiceClient->adress->setID_city(System::Convert::ToInt32(selectedRow->Cells[9]->Value));
+			this->ServiceClient->adress->setID_country(System::Convert::ToInt32(selectedRow->Cells[11]->Value));
 			try {
-				this->ServiceClient->supprimerClient();
+				DelegateIncrement^ pointeurSurIncrementProduct = gcnew DelegateIncrement(this->ServiceCommand->productMapper, &Composant::MapProduct::Increment);
+				DelegateIDProduct^ pointeurSurSetIDProduct = gcnew DelegateIDProduct(this->ServiceCommand->productMapper, &Composant::MapProduct::setProductId);
+				this->ServiceClient->supprimerClient(pointeurSurIncrementProduct, pointeurSurSetIDProduct);
 			}
 			catch (Exception^ e)
 			{
@@ -1033,16 +1126,15 @@ private: System::Void deleteButtonCommand_Click(System::Object^ sender, System::
 
 			selectedIndex = dataGridViewCommand->SelectedRows[i]->Index;
 			DataGridViewRow^ selectedRow = dataGridViewCommand->Rows[selectedIndex];
-			int idOrder = (System::Convert::ToInt32(selectedRow->Cells[2]->Value));
+			int idOrder = (System::Convert::ToInt32(selectedRow->Cells[0]->Value));
 			for each (DataGridViewRow ^ row in this->dataGridViewCommand->Rows)
 			{
-				// Assuming your columns are at index 0 and 1, change accordingly
-				Object^ valueInColumnID = row->Cells[2]->Value;
+				Object^ valueInColumnID = row->Cells[0]->Value;
 
 				if (valueInColumnID != nullptr  && Convert::ToInt32(valueInColumnID) == idOrder )
 				{
 					int idProduit = System::Convert::ToInt32(selectedRow->Cells[9]->Value);
-					int quantity = System::Convert::ToInt32(selectedRow->Cells[11]->Value);
+					int quantity = System::Convert::ToInt32(selectedRow->Cells[10]->Value);
 					listIDs->Add(Tuple::Create(idProduit, quantity));
 				}
 			}
@@ -1084,8 +1176,8 @@ private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e
 
 			selectedIndex = stockInCommandGridView->SelectedRows[i]->Index;
 			DataGridViewRow^ selectedRow = stockInCommandGridView->Rows[selectedIndex];
-			int quantite = (System::Convert::ToInt32(selectedRow->Cells[5]->Value));
-			int idProduit = (System::Convert::ToInt32(selectedRow->Cells[0]->Value));
+			int quantite = (System::Convert::ToInt32(selectedRow->Cells[2]->Value));
+			int idProduit = (System::Convert::ToInt32(selectedRow->Cells[4]->Value));
 			if (quantite - number < 0)
 			{
 				MessageBox::Show("quantite de produit insuffisante");
@@ -1095,14 +1187,15 @@ private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e
 			{
 				listIDs->Add(Tuple::Create(idProduit, number));
 				richTextBoxCommand->AppendText("product id: "+ idProduit+" added quantity : "+ number);
-			}
-			try {
+				try {
 
+				}
+				catch (Exception^ e)
+				{
+					MessageBox::Show("Une erreur s'est produite : " + e->Message, "Erreur", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				}
 			}
-			catch (Exception^ e)
-			{
-				MessageBox::Show("Une erreur s'est produite : " + e->Message, "Erreur", MessageBoxButtons::OK, MessageBoxIcon::Error);
-			}
+			
 		}
 
 
@@ -1115,7 +1208,208 @@ private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e
 }
 private: System::Void stockInCommandGridView_CellContentClick(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e) {
 }
-};
+private: System::Void button3_Click(System::Object^ sender, System::EventArgs^ e) {
+	this->dataGridViewStock->Refresh();
+	System::Data::DataSet^ d = this->serviceStock->selectAllStock("tabproduit");
+	this->dataGridViewStock->DataSource = d;
+	this->dataGridViewStock->DataMember = "tabproduit";
 }
+private: System::Void searchButtonStock_Click(System::Object^ sender, System::EventArgs^ e) {
+	System::Data::DataSet^ originalDataSet = this->serviceStock->selectAllStock("tabproduit");
+	this->dataGridViewStock->DataSource =this->serviceStock->Chercher(originalDataSet,searchTextBoxStock->Text->ToString(), "tabproduit");
+
+}
+private: System::Void searchButtonCommand_Click(System::Object^ sender, System::EventArgs^ e) {
+	System::Data::DataSet^ originalDataSet = this->ServiceCommand->selectAllCommands("tabcommand");
+	this->dataGridViewCommand->DataSource = this->ServiceCommand->Chercher(originalDataSet, searchTextBoxCommand->Text->ToString(), "tabcommand");
+	this->dataGridViewCommand->Refresh();
+}
+private: System::Void clientInCommandSearchButton_Click(System::Object^ sender, System::EventArgs^ e) {
+	System::Data::DataSet^ originalDataSet = this->ServiceClient->selectAllCustomers("tabcustomer");
+	this->dataGridViewClientInCommand->DataSource = this->ServiceCommand->Chercher(originalDataSet, clientInCommandSearchBox->Text->ToString(), "tabcustomer");
+	this->dataGridViewClientInCommand->Refresh();
+}
+private: System::Void stockInCommandSearchButton_Click(System::Object^ sender, System::EventArgs^ e) {
+	System::Data::DataSet^ originalDataSet = this->ServiceCommand->selectAllProducts("tabstock");
+	this->stockInCommandGridView->DataSource = this->ServiceCommand->Chercher(originalDataSet, stockInCommandSearchBox->Text->ToString(), "tabstock");
+	this->stockInCommandGridView->Refresh();
+}
+private: System::Void searchButtonClient_Click(System::Object^ sender, System::EventArgs^ e) {
+	System::Data::DataSet^ originalDataSet = this->ServiceClient->selectAllCustomers("tabcustomers");
+	this->dataGridViewClient->DataSource = this->ServiceClient->Chercher(originalDataSet, searchTextBoxClient->Text->ToString(), "tabcustomers");
+	this->dataGridViewClient->Refresh();
+}
+private: System::Void addButtonStock_Click(System::Object^ sender, System::EventArgs^ e) {
+
+	int lastEmptyRowIndex = -1;
+
+	for (int i = dataGridViewStock->Rows->Count - 1; i >= 0; i--)
+	{
+		DataGridViewRow^ row = dataGridViewStock->Rows[i];
+
+		// Check if all cells in the row are empty
+		bool isEmpty = true;
+		for each (DataGridViewCell ^ cell in row->Cells)
+		{
+			if (cell->Value != nullptr && cell->Value->ToString() != "")
+			{
+				isEmpty = false;
+				break;
+			}
+		}
+
+		if (isEmpty)
+		{
+			lastEmptyRowIndex = i;
+			DataGridViewRow^ selectedRow = dataGridViewStock->Rows[lastEmptyRowIndex - 1];
+			this->serviceStock->stockMapper->setNom(System::Convert::ToString(selectedRow->Cells[1]->Value));
+			this->serviceStock->stockMapper->setQuantity(System::Convert::ToInt32(selectedRow->Cells[2]->Value));
+			this->serviceStock->stockMapper->setQuantityMax(System::Convert::ToInt32(selectedRow->Cells[3]->Value));
+			this->serviceStock->productMapper->setProductName(System::Convert::ToString(selectedRow->Cells[5]->Value));
+			this->serviceStock->productMapper->setProductDescr(System::Convert::ToString(selectedRow->Cells[6]->Value));
+			this->serviceStock->productMapper->setUnitPrice(System::Convert::ToInt32(selectedRow->Cells[7]->Value));
+			this->serviceStock->productMapper->setTvaClass(System::Convert::ToString(selectedRow->Cells[9]->Value));
+			this->serviceStock->productMapper->setTvaValue(System::Convert::ToInt32(selectedRow->Cells[10]->Value));
+			this->serviceStock->productMapper->setProductColor(System::Convert::ToString(selectedRow->Cells[12]->Value));
+
+			this->serviceStock->addProduct();
+			break;
+		}
+	}
+
+
+
+}
+private: System::Void modifyButtonStock_Click(System::Object^ sender, System::EventArgs^ e) {
+	int selectedIndex;
+	if (this->dataGridViewStock->SelectedRows->Count > 0)
+	{
+
+		selectedIndex = this->dataGridViewStock->SelectedRows[0]->Index;
+		DataGridViewRow^ selectedRow = dataGridViewStock->Rows[selectedIndex];
+		
+		
+		this->serviceStock->stockMapper->setIdStock(System::Convert::ToInt32(selectedRow->Cells[0]->Value));
+		this->serviceStock->stockMapper->setNom(System::Convert::ToString(selectedRow->Cells[1]->Value));
+		this->serviceStock->stockMapper->setQuantity(System::Convert::ToInt32(selectedRow->Cells[2]->Value));
+		this->serviceStock->stockMapper->setQuantityMax(System::Convert::ToInt32(selectedRow->Cells[3]->Value));
+		this->serviceStock->productMapper->setProductId(System::Convert::ToInt32(selectedRow->Cells[4]->Value));
+		this->serviceStock->productMapper->setProductName(System::Convert::ToString(selectedRow->Cells[5]->Value));
+		this->serviceStock->productMapper->setProductDescr(System::Convert::ToString(selectedRow->Cells[6]->Value));
+		this->serviceStock->productMapper->setUnitPrice(System::Convert::ToInt32(selectedRow->Cells[7]->Value));
+		this->serviceStock->productMapper->setTvaId(System::Convert::ToInt32(selectedRow->Cells[8]->Value));
+		this->serviceStock->productMapper->setTvaClass(System::Convert::ToString(selectedRow->Cells[9]->Value));
+		this->serviceStock->productMapper->setTvaValue(System::Convert::ToInt32(selectedRow->Cells[10]->Value));
+		this->serviceStock->productMapper->setColorId(System::Convert::ToInt32(selectedRow->Cells[11]->Value));
+		this->serviceStock->productMapper->setProductColor(System::Convert::ToString(selectedRow->Cells[12]->Value));
+
+		try
+		{
+			this->serviceStock->modifyProduct();
+		}
+		catch (Exception^ ex) {
+			MessageBox::Show("Error: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+		
+	}
+	else
+	{
+		MessageBox::Show("ya pas de stock selectionne");
+		return;
+	}
+
+
+
+}
+private: System::Void deleteButtonStock_Click(System::Object^ sender, System::EventArgs^ e) {
+	int selectedIndex;
+	if (this->dataGridViewStock->SelectedRows->Count > 0)
+	{
+
+		selectedIndex = this->dataGridViewStock->SelectedRows[0]->Index;
+		DataGridViewRow^ selectedRow = dataGridViewStock->Rows[selectedIndex];
+
+		this->serviceStock->productMapper->setProductId(System::Convert::ToInt32(selectedRow->Cells[4]->Value));
+
+		try
+		{
+			this->serviceStock->deleteProduct();
+		}
+		catch (Exception^ ex) {
+			MessageBox::Show("Error: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+
+	}
+	else
+	{
+		MessageBox::Show("ya pas de produit selectionne");
+		return;
+	}
+}
+private: System::Void searchButtonStock_Click_1(System::Object^ sender, System::EventArgs^ e) {
+	System::Data::DataSet^ originalDataSet = this->serviceStock->selectAllStock("tabproduit");
+	this->dataGridViewStock->DataSource = this->serviceStock->Chercher(originalDataSet, searchTextBoxStock->Text->ToString(), "tabproduit");
+	this->dataGridViewStock->Refresh();
+}
+private: System::Void modifyButtonCommand_Click(System::Object^ sender, System::EventArgs^ e) {
+	int selectedIndex;
+	if (this->dataGridViewCommand->SelectedRows->Count > 0)
+	{
+		selectedIndex = this->dataGridViewCommand->SelectedRows[0]->Index;
+		DataGridViewRow^ selectedRow = dataGridViewCommand->Rows[selectedIndex];
+
+		this->ServiceCommand->commandMapper->setID(System::Convert::ToInt32(selectedRow->Cells[0]->Value));
+		this->ServiceCommand->commandMapper->setPayementDate(System::Convert::ToString(selectedRow->Cells[2]->Value));
+		this->ServiceCommand->commandMapper->setRecPayDate(System::Convert::ToString(selectedRow->Cells[3]->Value));
+		this->ServiceCommand->commandMapper->setPresumeDate(System::Convert::ToString(selectedRow->Cells[4]->Value));
+		this->ServiceCommand->commandMapper->setEmissionDate(System::Convert::ToString(selectedRow->Cells[5]->Value));
+		this->ServiceCommand->commandMapper->setIdPaymentMeans(System::Convert::ToInt32(selectedRow->Cells[7]->Value));
+		this->ServiceCommand->commandMapper->setPayMeanName(System::Convert::ToString(selectedRow->Cells[8]->Value));
+
+		try
+		{
+			this->ServiceCommand->ModifyCommand();
+		}
+		catch (Exception^ ex) {
+			MessageBox::Show("Error: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+
+	}
+	else
+	{
+		MessageBox::Show("ya pas de modification");
+		return;
+	}
+}
+private: System::Void billButton_Click(System::Object^ sender, System::EventArgs^ e) {
+	int selectedIndex;
+	if (this->dataGridViewCommand->SelectedRows->Count > 0)
+	{
+		selectedIndex = this->dataGridViewCommand->SelectedRows[0]->Index;
+		DataGridViewRow^ selectedRow = dataGridViewCommand->Rows[selectedIndex];
+
+		this->ServiceCommand->commandMapper->setID(System::Convert::ToInt32(selectedRow->Cells[0]->Value));
+
+		try
+		{
+			this->ServiceCommand->createBill();
+		}
+		catch (Exception^ ex) {
+			MessageBox::Show("Error: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+
+	}
+	else
+	{
+		MessageBox::Show("ya pas de commande selectionne");
+		return;
+	}
+
+}
+};
+
+}
+	
+
 	
 
