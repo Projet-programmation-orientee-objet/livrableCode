@@ -7,7 +7,7 @@ using namespace System::Data;
 using namespace System::Drawing;
 Composant::CNX::CNX()
 {
-	this->sCnx = "Data Source=\\SQLEXPRESS;Initial Catalog=gestion;Integrated Security=True"; // à completer le data source 
+	this->sCnx = "Data Source=AYA\\SQLEXPRESS;Initial Catalog=BaseDonneeProjet;Integrated Security=True";
 
 	this->sSql = "Rien";
 
@@ -41,10 +41,10 @@ System::Data::DataSet^ Composant::CNX::getData(System::String^ sSql, System::Str
 }
 void Composant::CNX::modifyDataNONSCALAr(System::String^ sSql)
 {
+	this->sSql = sSql;
+	this->oCmd->CommandText = this->sSql;
 	try
 	{
-		this->sSql = sSql;
-		this->oCmd->CommandText = this->sSql;
 		//this->oDA->SelectCommand = this->oCmd;
 		this->oCnx->Open();
 		this->oCmd->ExecuteNonQuery();
@@ -58,6 +58,32 @@ void Composant::CNX::modifyDataNONSCALAr(System::String^ sSql)
 	}
 	this->oCnx->Close();
 
+}
+List<Tuple<int, int>^>^ Composant::CNX::GetList( String^ sSql, String^ element1, String^ element2)
+{
+	List<Tuple<int, int>^>^ resultList = gcnew List<Tuple<int, int>^>();
+	this->sSql = sSql;
+	this->oCmd->CommandText = this->sSql;
+	try
+	{
+		this->oCnx->Open();
+		SqlDataReader^ reader = this->oCmd->ExecuteReader(CommandBehavior::CloseConnection);
+		while (reader->Read())
+		{
+			// Assuming id_produit is of type int in the database
+			int id_list = safe_cast<int>(reader[element1]);
+			int id_list1 = safe_cast<int>(reader[element2]);
+			resultList->Add(Tuple::Create(id_list, id_list1));
+		}
+
+		reader->Close();
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error: " + ex->Message);
+	}
+
+	return resultList;
 }
 int Composant::CNX::modifyData(System::String^ sSql)
 {

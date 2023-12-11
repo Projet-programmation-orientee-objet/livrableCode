@@ -3,7 +3,8 @@
 using namespace System;
 using namespace System::Windows::Forms;
 using namespace System::Data;
-using namespace MySql::Data::MySqlClient;
+
+
 
 namespace Composant {
     ref class MapProduct
@@ -27,11 +28,13 @@ namespace Composant {
         void setTvaClass(String^ tvaClass);
         void setProductName(String^ name);
         void setProductDescr(String^ descr);
+
         void setProductColor(String^ color);
         void setUnitPrice(float price);
         void setTvaValue(float value);
-        String^ selectAll(String^ dataTableName);
+        String^ selectAll();
         String^ selectWithId(String^ dataTableName);
+       
 
         int getProductId();
         int getTvaId();
@@ -51,8 +54,16 @@ namespace Composant {
 
         String^ updateProduct();
         String^ updtateColored();
+        String^ updtateTva();
+        String^ updtateColor();
 
         String^ Decrement(int n);
         String^ Increment(int n);
     };
 }
+
+
+
+
+
+
