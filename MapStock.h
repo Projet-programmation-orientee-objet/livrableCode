@@ -6,6 +6,7 @@ namespace Composant {
     ref class MapStock
     {
     private:
+        String^ nom;
         int idProduct;
         int idStock;
         //----------------------------------------------------------------------
@@ -18,10 +19,11 @@ namespace Composant {
 
         MapStock(void);
         void setIdStock(int);
+        void setIdProduct(int);
         //----------------------------------------------------------------------
         void setQuantity(int);
         void setQuantityMax(int);
-
+        void setNom(String^ nom);
         //getters :
 
         System::String^ getIdProduit();
@@ -42,6 +44,7 @@ namespace Composant {
         System::String^ deleteStock();
 
         System::String^ updateStocked();
+        System::String^ updateStock();
 
     };
 }
